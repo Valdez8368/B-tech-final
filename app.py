@@ -83,14 +83,9 @@ def face_rec(frame):
     return frame
 #main function to start the server and encoding the images stored in the folder
 if __name__ == "__main__":
-<<<<<<< HEAD
-    #app.run(host='0.0.0.0', port=8000, debug=True,ssl_context=('cert.pem', 'key.pem'))
-    socketio.run(app,host='0.0.0.0',port=8000,debug=True,ssl_context='adhoc')
-=======
     for i in os.listdir(path):
         image=face_recognition.load_image_file(os.path.join(path,i))
         encoding=face_recognition.face_encodings(image)[0]
         known_faces.append(encoding)
         known_names.append(i.split('.')[0])
     socketio.run(app,host='0.0.0.0',port=8000,ssl_context='adhoc')
->>>>>>> Added face recongization
