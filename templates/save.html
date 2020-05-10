@@ -15,8 +15,9 @@
     <button onclick="takePicture()">Take photo</button>
     <video id='video'></video>
     <canvas id='canvas'></canvas>
-    <img id="photo" alt="no photo">
+    <img id="photo" alt="some photo">
     <p id="error"></p>
+    <button onclick="savePhoto()">Save Image</button>
 
     <script>
         const video=document.getElementById('video');
@@ -27,7 +28,7 @@
         var width=320;
         var height=0;
 
-        navigator.mediaDevices.getUserMedia({video:true}) //{facingMode:{exact:"environment"}}
+        navigator.mediaDevices.getUserMedia({video:true}) //{facingMode:{exact:"environment"}} for back camera
         .then(function(stream){
             video.srcObject=stream;
             video.play();
@@ -40,12 +41,14 @@
             if(isNan(height)){
                 height=width/(4/3);
             }
+            alert('something');
             video.setAttribute('width',width);
             video.setAttribute('height',height);
             canvas.setAttribute('width',width);
             canvas.setAttribute('height',height);
         };
         function takePicture(){
+            let context=canvas.getContext('2d');
             if(width && height){
                 canvas.width=width;
                 canvas.height=height;
@@ -58,15 +61,20 @@
             }
         }
         function clearphoto(){
+            let context=canvas.getContext('2d');
             context.fillStyle='#AAA';
             context.fillRect(0,0,canvas.width,canvas.height);
             let data=canvas.toDataURL('image/png');
             photo.setAttribute('src',data);
         }
-        setInterval(function(){
-            context.drawImage(video,0,0,width,height);
-            socket.emit('camera',canvas.toDataURL('image/png'));     
-        },1000);
+        function savePhoto(){
+            message=[];
+            var person=prompt('Enter the person name');
+            message.push(person);
+            context.drawImage(photo,0,0,width,height);
+            message.push(canvas.toDataURL('image/png'));
+            socket.emit('save',message);     
+        }
     </script>
 </body>
 </html>
