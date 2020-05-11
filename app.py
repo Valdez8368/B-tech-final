@@ -85,7 +85,7 @@ def face_rec(frame):
 if __name__ == "__main__":
     for i in os.listdir(path):
         image=face_recognition.load_image_file(os.path.join(path,i))
-        encoding=face_recognition.face_encodings(image)[0]
+        encoding=face_recognition.face_encodings(image)
         known_faces.append(encoding)
         known_names.append(i.split('.')[0])
     socketio.run(app,host='0.0.0.0',port=8000,ssl_context='adhoc')
