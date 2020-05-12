@@ -65,7 +65,7 @@ def face_rec(frame):
     locations=face_recognition.face_locations(frame_rgb)
     encoding=face_recognition.face_encodings(frame_rgb,locations)
     for face_encoding,face_location in zip(encoding,locations):
-        results=face_recognition.compare_faces(known_faces,face_encoding)
+        results=face_recognition.compare_faces(known_faces,face_encoding,0.4)
         match=None
         if True in results:
             match=known_names[results.index(True)]
@@ -88,4 +88,4 @@ if __name__ == "__main__":
         encoding=face_recognition.face_encodings(image)
         known_faces.append(encoding)
         known_names.append(i.split('.')[0])
-    socketio.run(app,host='0.0.0.0',port=8000,ssl_context='adhoc')
+    socketio.run(app,host='0.0.0.0',debug=True,port=8000,ssl_context='adhoc')
