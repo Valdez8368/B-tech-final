@@ -10,7 +10,9 @@
     python app.py
  You can acess the application homepage either by enterning `https://localhost:8000(default path)` in your browser or you can acess from another device using the IP address of the system which running the application.If all went well you will see `Hello World` in your browser.
 
- You need to open the path `/camera` to make it a client camera that records the data.
+ You need to open the path `/front` to make it a front camera of your phone(or the default one) that records the data.
+ 
+ You need to open the path `/back` to make it a front camera of your phone(or the default one) that records the data.
 
  The `/dashboard`  will be the place where you can view the recorded data in the real-time
  

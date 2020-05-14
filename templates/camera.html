@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+    <style>
+        #canvas{
+            display: none;
+        }
+    </style>
+    <title>Camera</title>
+</head>
+<body>
+    
+    <video id='video'></video>
+    <canvas id='canvas'></canvas>
+    <p id="error"></p>
+
+    <script>
+        const video=document.getElementById('video');
+        const canvas=document.getElementById('canvas');
+        const photo=document.getElementById('photo');
+        const context=canvas.getContext('2d');
+        const socket=io();
+        var width=320;
+        var height=0;
+        var name=prompt('Enter the device name');
+        navigator.mediaDevices.getUserMedia({video:{facingMode:{exact:"environment"}}}) //{facingMode:{exact:"environment"}}
+        .then(function(stream){
+            video.srcObject=stream;
+            video.play();
+        })
+        .catch(function(error){
+            document.getElementById("error").innerHTML=error;
+        });
+        video.oncanplay=function(){
+            height=video.videoHeight / (video.videoWidth/ width);
+            if(isNan(height)){
+                height=width/(4/3);
+            }
+            video.setAttribute('width',width);
+            video.setAttribute('height',height);
+            canvas.setAttribute('width',width);
+            canvas.setAttribute('height',height);
+        };
+        function clearphoto(){
+            context.fillStyle='#AAA';
+            context.fillRect(0,0,canvas.width,canvas.height);
+            let data=canvas.toDataURL('image/png');
+            photo.setAttribute('src',data);
+        }
+        setInterval(function(){
+            canvas.width=width;
+            canvas.height=height;
+            context.drawImage(video,0,0,width,height);
+            socket.emit('camera',[name,canvas.toDataURL('image/png')]);     
+        },1000);
+    </script>
+</body>
+</html>

@@ -4,18 +4,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js" integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
-    <title>Document</title>
+    <title>Dashboard</title>
+    <style>
+        body{
+            background: #323232;
+        }
+        #main{
+            width: 60%;
+            height: auto;
+            float: left;
+            background: #323232;
+        }
+        #title{
+            font-family: Work Sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 36px;
+            line-height: 42px;
+            color: #FFFFFF;
+        }
+        #notification_block
+        {
+            float: right;
+            width:40%;
+            height: auto;
+            background: #474747;
+        }
+        #notify_text{
+            position: sticky;
+            font-family: Work Sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 36px;
+            line-height: 42px;
+            color: #FFFFFF;
+        }
+        .camera_feed{
+            float:left;
+            padding: 15px;
+        }
+        .camera_text{
+            font-family: Work Sans;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 24px;
+            line-height: 28px;
+            color: #9E9E9E;
+        }
+        #found{
+            overflow:scroll;
+        }
+    </style>
 </head>
 <body>
-    <img id="image">
-    <p id="text"></p>
+    <div id='main'>
+        <div id="title">
+            Connected devices
+        </div>
+    </div>
+    <div id="notification_block">
+        <span id="notify_text">
+            <center>Notifications</center>
+        </span>
+        <span id='found' class='camera_text'>
 
+        </span>
+    </div>
     <script>
-        const  image=document.getElementById('image');
+        const image=document.getElementById('image');
         var socket=io();
         socket.on('video',function(frame){
-            image.setAttribute('src',frame);
-            document.getElementById('text').innerHTML=text;
+            const obj=JSON.parse(frame);
+            var found='';
+            const today=new Date();
+            const main=document.getElementById('main');
+            keys=new Array();
+            for (key in obj){
+                //image.setAttribute('src',obj[key]['data']);
+                //document.getElementById('camera_text').innerHTML=key;
+                keys.push(key);
+                let image=document.getElementById(key);
+                if(!image){
+                    let div=document.createElement('div');
+                    div.setAttribute('class','camera_feed');
+                    div.setAttribute('id',key+'_div');
+                    let image=document.createElement('img');
+                    image.setAttribute('src',obj[key]['data']);
+                    image.setAttribute('id',key);
+                    let text=document.createElement('span');
+                    text.setAttribute('class','camera_text');
+                    text.innerHTML='<br/> ID:'+key;
+                    div.appendChild(image);
+                    div.appendChild(text);
+                    main.appendChild(div);
+                }else{
+                    image.setAttribute('src',obj[key]['data']);
+                }
+                found=obj[key]['found'];
+                if(!found)
+                    console.log('something something no face');
+                else{
+                    time=today.getHours()+':'+today.getMinutes()+':'+today.getSeconds();
+                    let text=document.getElementById('found').innerHTML;
+                    document.getElementById('found').innerHTML=time+': '+found+' is spotted at camera '+key+'<br>'+text;
+                }   
+                let images=document.images;
+                for(let i=0;i<images.length;i++){
+                    let id=images[i].getAttribute('id');
+                    if(!keys.includes(id)){
+                        let div=document.getElementById(id+'_div');
+                        main.removeChild(div);
+                    }
+                }
+                
+            }
+            
+            //document.getElementById('camera_text').innerHTML=obj['gitgv']['data'];
+            // image.setAttribute('src',frame[1]);
         });
     </script>
 </body>
